@@ -63,7 +63,7 @@ contract DStorage {
         require(_fileSize > 0);
 
         // Increment file id
-        fileCount++; // fileCount = fileCount + 1;
+        fileCount ++; // fileCount = fileCount + 1;
 
         // Add File to the contract
         files[fileCount] = File(

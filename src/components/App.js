@@ -40,17 +40,20 @@ class App extends Component {
     this.setState({ account: accounts[0] })
 
     //Network ID
-    const networkId = await web3.eth.net.getId()
+    const networkId = await web3.eth.net.getId().then(console.log)
     const networkData = DStorage.networks[networkId]
 
     //IF got connection, get data from contracts
+    console.log("Working..." + networkData)
     if (networkData) {
       //Assign contract
       const dstorage = new web3.eth.Contract(DStorage.abi, networkData.address)
       this.setState({ dstorage })
       //Get files amount
+      console.log("Getting files amount: " + await dstorage.methods.getFilesAmount().call())
       const filesCount = await dstorage.methods.fileCount().call()
       this.setState({ filesCount })
+      console.log("Files count: " + filesCount)
       //Load files&sort by the newest
       for (var i = filesCount; i >= 1; i--) {
         const file = await dstorage.methods.files(i).call()
@@ -62,18 +65,19 @@ class App extends Component {
     } else {
       //alert Error
       window.alert('DStorage contract not deployed to detected network.')
+      console.log('DStorage contract not deployed to detected network.')
     }
 
   }
 
   // Get file from user
   captureFile = event => {
-    event.preventDefault()
+    event.preventDefault()  // prevent default behavior of form
 
-    const file = event.target.files[0]
-    const reader = new window.FileReader()
+    const file = event.target.files[0]  // get file from file field
+    const reader = new window.FileReader()  // native file reader
 
-    reader.readAsArrayBuffer(file)
+    reader.readAsArrayBuffer(file)  // convert to a buffer
     reader.onloadend = () => {
       this.setState({
         buffer: Buffer(reader.result),
@@ -92,7 +96,7 @@ class App extends Component {
 
     //Add file to the IPFS
     ipfs.add(this.state.buffer, (error, result) => {
-      console.log('IPFS result', result.size)
+      console.log('IPFS result', result)
       //Check If error
       if (error) {
         //Return error
@@ -107,13 +111,17 @@ class App extends Component {
       if (this.state.type === '') {
         this.setState({ type: 'none' })
       }
-      //Call smart contract uploadFile function 
-      this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
+
+    
+      //Call smart contract uploadFile function
+      console.log(result[0].hash, this.state.type, this.state.name, description)
+      this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', hash => {  // TODO on('transactionHash')
         this.setState({
           loading: false,
           type: null,
           name: null
         })
+        hash();
         window.location.reload()
       }).on('error', (e) => {
         window.alert('Error')

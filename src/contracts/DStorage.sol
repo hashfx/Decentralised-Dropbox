@@ -4,7 +4,8 @@ pragma solidity ^0.5.0;
 
 contract DStorage {
     // name of the contract
-    string public name = "Decentralised Storage";
+    string public name = "DStorage";
+    // string public name = "Decentralised Storage";
 
     // Number of files in the storage
     uint256 public fileCount = 0;

@@ -41,7 +41,7 @@ class App extends Component {
 
     //Network ID
     const networkId = await web3.eth.net.getId().then(console.log)
-    const networkData = DStorage.networks[networkId]
+    const networkData = DStorage.networks[5777]
 
     //IF got connection, get data from contracts
     console.log("Working..." + networkData)
@@ -50,7 +50,7 @@ class App extends Component {
       const dstorage = new web3.eth.Contract(DStorage.abi, networkData.address)
       this.setState({ dstorage })
       //Get files amount
-      console.log("Getting files amount: " + await dstorage.methods.getFilesAmount().call())
+      // console.log("Getting files amount: " + await dstorage.methods.getFilesAmount().call())  // not a function error
       const filesCount = await dstorage.methods.fileCount().call()
       this.setState({ filesCount })
       console.log("Files count: " + filesCount)
@@ -114,14 +114,15 @@ class App extends Component {
 
     
       //Call smart contract uploadFile function
-      console.log(result[0].hash, this.state.type, this.state.name, description)
-      this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', hash => {  // TODO on('transactionHash')
+      console.log(result[0].hash, result[0].size, this.state.type, this.state.name, description)
+      this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
+      // this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', (hash) => {  // TODO on('transactionHash')
         this.setState({
           loading: false,
           type: null,
           name: null
         })
-        hash();
+        
         window.location.reload()
       }).on('error', (e) => {
         window.alert('Error')

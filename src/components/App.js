@@ -41,7 +41,7 @@ class App extends Component {
 
     //Network ID
     const networkId = await web3.eth.net.getId().then(console.log)
-    const networkData = DStorage.networks[5777]
+    const networkData = DStorage.networks[networkId]
 
     //IF got connection, get data from contracts
     console.log("Working..." + networkData)

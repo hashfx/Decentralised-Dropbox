@@ -21,7 +21,7 @@ class App extends Component {
     //Setting up Web3
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum)
-      await window.ethereum.enable()
+      await window.ethereum.request({ method: 'eth_requestAccounts' })
     }
     else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider)
@@ -44,7 +44,7 @@ class App extends Component {
     const networkData = DStorage.networks[networkId]
 
     //IF got connection, get data from contracts
-    console.log("Working..." + networkData)
+    console.log("Working..." + networkId + " " + networkData)
     if (networkData) {
       //Assign contract
       const dstorage = new web3.eth.Contract(DStorage.abi, networkData.address)

@@ -1,4 +1,4 @@
-const DStorage = artifacts.require("DStorage");
+const DStorage = artifacts.require("src/contracts/DStorage.sol");
 
 module.exports = function(deployer) {
   deployer.deploy(DStorage);

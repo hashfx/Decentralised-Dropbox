@@ -6,12 +6,36 @@ import Web3 from 'web3';
 import './App.css';
 
 //Declare IPFS
+//
+const { create } = require("ipfs-http-client");
+const fs = require("fs")
+/*
+import * as IPFS from 'ipfs-core'
+const ipfs = await IPFS.create()
+const { cid } = await ipfs.add('Hello world')
+console.info(cid)
+*/
+//
 const ipfsClient = require('ipfs-http-client');
 const projectId = 'process.env.PROJECTID';
 const projectSecret = 'process.env.PROJECTSECRET';
 const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
 
 // leaving out the arguments will default to these values
+// async function ipfsClient() {
+//   const ipfs = await create(
+//       {
+//           host: "ipfs.infura.io",
+//           port: 5001,
+//           protocol: "https",
+//             headers: {
+//              authorization: auth, // infura auth credentails
+//          },
+//       }
+//   );
+//   return ipfs;
+// }
+
 const ipfs = ipfsClient({
   host: 'ipfs.infura.io',
   port: 5001,

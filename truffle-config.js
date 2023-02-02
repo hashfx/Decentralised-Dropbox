@@ -1,46 +1,33 @@
-require('babel-register');
-require('babel-polyfill');
-require('dotenv').config();
-const HDWalletProvider = require("@truffle/hdwallet-provider");
-const privateKeys = process.env.PRIVATE_KEYS || ""
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const fs = require('fs');
+const mnemonic = fs.readFileSync(".secret").toString().trim();
 
 module.exports = {
   networks: {
     development: {
-      host: "127.0.0.1",
-      port: 8545,
-      network_id: "*" // Match any network id
-    },
-    ropsten: {
-      provider: function() {
-        return new HDWalletProvider(
-          privateKeys.split(','), // Array of account private keys
-          `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`// Url to an Ethereum Node
-        )
-      },
-      gas: 5000000,
-      gasPrice: 25000000000,
-      network_id: 3
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 8545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
     },
     matic: {
-      provider: () => new HDWalletProvider(process.env.PRIVATE_KEYS, 
-      `https://rpc-mumbai.matic.today`),
+      provider: () => new HDWalletProvider(mnemonic, `https://rpc-mumbai.maticvigil.com`),
       network_id: 80001,
       confirmations: 2,
       timeoutBlocks: 200,
-      skipDryRun: true,
-      gas: 6000000,
-      gasPrice: 10000000000,
+      skipDryRun: true
     },
+  },
+
+  // Set default mocha options here, use special reporters etc.
+  mocha: {
+    // timeout: 100000
   },
   contracts_directory: './src/contracts/',
   contracts_build_directory: './src/abis/',
+  // Configure your compilers
   compilers: {
     solc: {
-      optimizer: {
-        enabled: true,
-        runs: 200
-      }
+        version: "0.5.0",
     }
   }
 }

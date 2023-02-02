@@ -6,9 +6,20 @@ import Web3 from 'web3';
 import './App.css';
 
 //Declare IPFS
-const ipfsClient = require('ipfs-http-client')
+const ipfsClient = require('ipfs-http-client');
+const projectId = 'process.env.PROJECTID';
+const projectSecret = 'process.env.PROJECTSECRET';
+const auth = 'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+
 // leaving out the arguments will default to these values
-const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
+const ipfs = ipfsClient({
+  host: 'ipfs.infura.io',
+  port: 5001,
+  protocol: 'https',
+  headers: {
+    authorization: auth,
+  },
+})
 
 class App extends Component {
 
@@ -112,17 +123,17 @@ class App extends Component {
         this.setState({ type: 'none' })
       }
 
-    
+
       //Call smart contract uploadFile function
       console.log(result[0].hash, result[0].size, this.state.type, this.state.name, description)
       this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
-      // this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', (hash) => {  // TODO on('transactionHash')
+        // this.state.dstorage.methods.uploadFile(result[0].hash, result[0].size, this.state.type, this.state.name, description).send({ from: this.state.account }).on('transactionHash', (hash) => {  // TODO on('transactionHash')
         this.setState({
           loading: false,
           type: null,
           name: null
         })
-        
+
         window.location.reload()
       }).on('error', (e) => {
         window.alert('Error')
